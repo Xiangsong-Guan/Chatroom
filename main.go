@@ -40,16 +40,22 @@ func main() {
 // here we will make some handlers
 // serveHome handle "/", it just server static file home.html
 func serveHome(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		log.Println("invalid url:", r.URL.Path, "for \"/\"")
-		http.Error(w, "Not found", http.StatusNotFound)
-		return
-	}
 	if r.Method != "GET" {
 		log.Println("invalid method:", r.Method, "for \"GET\"")
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	http.ServeFile(w, r, "home.html")
+
+	switch r.URL.Path {
+	case "/":
+		http.ServeFile(w, r, "html/home.html")
+	case "/css/home.css":
+		http.ServeFile(w, r, "html/css/home.css")
+	case "/js/home.js":
+		http.ServeFile(w, r, "html/js/home.js")
+	default:
+		log.Println("invalid url:", r.URL)
+	}
+
 	log.Println("servered", r.Method, r.URL)
 }
