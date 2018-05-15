@@ -1,7 +1,9 @@
 package main
 
 import (
-	hs "chatroom/httpserver"
+	"Chatroom/historylog"
+	hs "Chatroom/httpserver"
+	hb "Chatroom/hub"
 	"flag"
 	"log"
 	"net/http"
@@ -11,11 +13,18 @@ import (
 var addr = flag.String("addr", ":8080", "http service address")
 var logFile = flag.String("log file", "", "file path to log the chat history, leave it if just print to stdout")
 
+// some upvalue here
+var hl historylog.HistoryLog
+var hub hb.Hub
+
 func main() {
+	log.Println("Parse flags...")
 	flag.Parse()
 
 	// here we init the log
-	historyLog
+	hl = historylog.New(*logFile)
+	log.Println("fire up history log from:", *logFile)
+	defer hl.Close()
 
 	// here we get hub
 
@@ -24,6 +33,7 @@ func main() {
 		"/": serveHome,
 	}
 
+	log.Println("get httpserver listen on:", *addr)
 	hs.New(addr, handlers).Run()
 }
 

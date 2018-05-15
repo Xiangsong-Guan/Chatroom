@@ -2,8 +2,7 @@
 package httpserver
 
 import (
-	"chatroom/clog"
-	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -26,7 +25,7 @@ func New(addr *string, handlers map[string]func(http.ResponseWriter, *http.Reque
 func (hs HTTPServer) Run() {
 	// make sure we can handle something
 	if _, arimasu := hs.handlers["/"]; !arimasu {
-		clog.PrintFrom("No index handler", hs)
+		log.Println("No index handler", hs)
 	}
 
 	// register handler to pattern
@@ -36,13 +35,8 @@ func (hs HTTPServer) Run() {
 
 	// run http server
 	if err := http.ListenAndServe(hs.listenAddr, nil); err != nil {
-		clog.FatalFrom("Server fail to start", hs)
+		log.Fatalln("Server fail to start", hs)
 	}
-}
-
-// GenSummary generate summary for HTTPServer
-func (hs HTTPServer) GenSummary() string {
-	return fmt.Sprint("service at", hs.listenAddr)
 }
 
 // ListenAddr server's listening address
