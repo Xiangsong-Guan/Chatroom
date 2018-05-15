@@ -10,12 +10,14 @@ import (
 type HistoryLog struct {
 	target string
 	l      *log.Logger
+	file   *os.File
 }
 
 // New return a history log
 // need to target file
 func New(logFile string) HistoryLog {
 	var customLog *log.Logger
+	var file *os.File
 
 	if logFile == "" {
 		customLog = log.New(os.Stdout, "", log.LstdFlags)
@@ -25,13 +27,14 @@ func New(logFile string) HistoryLog {
 			log.Fatalln(err)
 		}
 
-		// 这个文件需要显示关闭吗？
+		// this file need to be closed handy
 		customLog = log.New(file, "", log.LstdFlags)
 	}
 
 	return HistoryLog{
 		target: logFile,
 		l:      customLog,
+		file:   file,
 	}
 }
 
