@@ -42,3 +42,11 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+.checkbox {
+  margin-top: 1rem;
+}
+
+h3 {
+  font-size: 1rem !important;
+}
