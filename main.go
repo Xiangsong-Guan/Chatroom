@@ -11,7 +11,7 @@ import (
 
 // flags here
 var addr = flag.String("addr", ":8080", "http service address")
-var logFile = flag.String("log file", "", "file path to log the chat history, leave it if just print to stdout")
+var logFile = flag.String("log", "", "file path to log the chat history, leave it if just print to stdout")
 
 // some upvalue here
 var hl historylog.HistoryLog
@@ -23,7 +23,11 @@ func main() {
 
 	// here we init the log
 	hl = historylog.New(*logFile)
-	log.Println("fire up history log from:", *logFile)
+	if *logFile == "" {
+		log.Println("fire up history log to stdout")
+	} else {
+		log.Println("fire up history log from:", *logFile)
+	}
 	defer hl.Close()
 
 	// here we get hub

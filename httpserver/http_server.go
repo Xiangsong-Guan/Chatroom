@@ -35,7 +35,7 @@ func (hs HTTPServer) Run() {
 
 	// run http server
 	if err := http.ListenAndServe(hs.listenAddr, nil); err != nil {
-		log.Fatalln("Server fail to start", hs)
+		log.Fatalln("Server fail to start", err)
 	}
 }
 
