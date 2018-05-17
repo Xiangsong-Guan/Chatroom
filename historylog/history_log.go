@@ -40,12 +40,13 @@ func New(logFile string) HistoryLog {
 
 // Close close the history log file
 // if something went wrong it will return err
-func (hl HistoryLog) Close() error {
+func (hl HistoryLog) Close() {
 	log.Println("handy close history log")
 	if hl.file != nil {
-		return hl.file.Close()
+		if err := hl.file.Close(); err != nil {
+			log.Println(err)
+		}
 	}
-	return nil
 }
 
 // PrintFrom print something about obj to log with newline
