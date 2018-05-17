@@ -7,6 +7,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"path"
 
 	"github.com/gorilla/websocket"
 )
@@ -14,14 +15,19 @@ import (
 // flags here
 var addr = flag.String("addr", ":8080", "http service address")
 var logFile = flag.String("log", "", "file path to log the chat history, leave it if just print to stdout")
+var home = flag.String("home", "html/", "serve flie root path")
+var indexFile = flag.String("index", "home.html", "index file in your html root dir, relative path")
 
 // some upvalue here
 var hl historylog.HistoryLog
 var hub hb.Hub
 
 func main() {
-	log.Println("Parse flags...")
 	flag.Parse()
+
+	*home = path.Clean(*home) + "/"
+	log.Println("set html root:", *home)
+	log.Println("set index file:", *home+*indexFile)
 
 	// here we init the log
 	hl = historylog.New(*logFile)
@@ -56,13 +62,13 @@ func serveStatic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("request:", r.Method, r.URL)
-
 	if r.URL.Path == "/" {
-		http.ServeFile(w, r, "html/home.html")
+		http.ServeFile(w, r, *home+*indexFile)
 	} else {
-		http.ServeFile(w, r, "html"+r.URL.Path)
+		http.ServeFile(w, r, *home+r.URL.Path)
 	}
+
+	log.Println("request:", r.Method, r.URL)
 }
 
 // chatin handle post method request to new a client
