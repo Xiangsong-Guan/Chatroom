@@ -50,7 +50,7 @@ func (hl HistoryLog) Close() {
 }
 
 // PrintFrom print something about obj to log with newline
-func (hl HistoryLog) PrintFrom(msg string, obj HistoryLogger) {
+func (hl HistoryLog) PrintFrom(obj HistoryLogger) {
 	hl.l.Println(obj.GenSummary())
 }
 
