@@ -104,7 +104,8 @@ func chatin(w http.ResponseWriter, r *http.Request) {
 	 * first it shuold pass this kind of info again, and we new a
 	 * client at that time. */
 
-	// TODO in ws handle: here we server chat page
+	//here we server chat page
+	http.ServeFile(w, r, *home+"chatroom.html")
 }
 
 // serveWs handle websocket conn, make a client and let this client
