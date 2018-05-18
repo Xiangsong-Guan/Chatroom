@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"path"
-	"strings"
 
 	"github.com/gorilla/websocket"
 )
@@ -20,7 +19,7 @@ var home = flag.String("home", "html/", "serve flie root path")
 var indexFile = flag.String("index", "home.html", "index file in your html root dir, relative path")
 
 // pre defined here
-var spChar = "|"
+var spChar = "\t"
 
 // some upvalue here
 var hl historylog.HistoryLog
@@ -106,13 +105,6 @@ func chatin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// here we add some additional check
-	if strings.Contains(email[0], spChar) || strings.Contains(nickname[0], spChar) {
-		log.Println("invalid chatin form: contains strange")
-		http.Error(w, "Invalid personal infomation", http.StatusBadRequest)
-		return
-	}
-
 	// here pass the check
 	log.Println("welcome", email[0], "the", nickname[0])
 
@@ -147,7 +139,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 	}
 	log.Print(string(m))
-	conn.WriteMessage(websocket.TextMessage, []byte("こにちは"))
+	conn.WriteMessage(websocket.TextMessage, []byte(string(m)+"\t2018年5月18日17点04分\tこにちは"))
 
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.

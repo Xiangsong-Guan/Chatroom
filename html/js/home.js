@@ -21,7 +21,8 @@ function getCookie(c_name) {
 window.addEventListener("load", () => {
   email = getCookie('email')
   nick = getCookie('nick')
-  if (email != null && email != "" && nick != null && nick != "") {
+  last = getCookie('success')
+  if (last != null && last != "") {
     tip = document.getElementById('tip')
     tip.innerHTML = '<h1 class="h3 mb-3 font-weight-normal">欢迎回到聊天室</h1><h3 class="h3 mb-3 font-weight-normal" >同志 ' + nick + '</h3>'
 
@@ -30,7 +31,7 @@ window.addEventListener("load", () => {
     document.getElementById('remember').checked = true
     setTimeout(() => {
       document.getElementById("form").submit()
-    }, 3000);
+    }, 1500);
   }
 })
 
@@ -39,5 +40,8 @@ document.getElementById("form").addEventListener("submit", () => {
   setCookie('nick', document.getElementById('inputNick').value, 30)
   if (document.getElementById('remember').checked) {
     setCookie('remember', document.getElementById('remember').value, 30)
+  } else {
+    setCookie('remember', "", -1)
   }
+  setCookie('success', "", -1)
 })

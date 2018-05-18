@@ -47,18 +47,23 @@ window.onload = function () {
   };
 
   if (window["WebSocket"]) {
-    conn = new WebSocket("ws://" + document.location.host + "/chatsocket");
-
     // 在这里对连接进行初始化，从cookie中读取personal info，向服务器请求分配资源
     email = getCookie('email')
     nick = getCookie('nick')
-    conn.onopen = () => conn.send(nick + "|" + email)
+    if (email == null || email == "" || nick == "" || nick == null) {
+      alert("同志，您的信息已过期，请重新进入聊天室。")
+      top.location.assign("http://" + document.location.host)
+    }
+    conn = new WebSocket("ws://" + document.location.host + "/chatsocket");
+    conn.onopen = () => conn.send(nick + "\t" + email)
 
     // 处理是否 remember me
     var r = getCookie('remember')
     if (r == null || r == "") {
       setCookie('email', "", -1)
       setCookie('nick', "", -1)
+    } else {
+      setCookie('success', "success", 30)
     }
 
     conn.onclose = function (evt) {
@@ -74,9 +79,9 @@ window.onload = function () {
     conn.onmessage = function (evt) {
       var messages = evt.data.split('\n');
       for (var i = 0; i < messages.length; i++) {
-        var subMsgs = messages[i].split('|')
+        var subMsgs = messages[i].split('\t')
         var item = document.createElement("div");
-        item.innerText = "***" + subMsgs[2] + "*** [" + subMsgs[0] + "@*.*." + subMsgs[1] + "] "
+        item.innerText = subMsgs[2] + " [" + subMsgs[0] + "@*.*." + subMsgs[1] + "] "
         for (var j = 3; j < subMsgs.length; j++) {
           item.innerText = item.innerText + subMsgs[j]
         }
