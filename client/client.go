@@ -26,15 +26,20 @@ func New(hubs *hub.Hub, webConn *websocket.Conn, inform message.Info) Client {
 	}
 }
 
-// readPump 函数
+// ReadPump 函数
 func (client *Client) ReadPump() {
 }
 
-// writePump 函数
+// WritePump 函数
 func (client *Client) WritePump() {
 }
 
 // Sender 能够提供一个可发送的信道来接受消息
 type Sender interface {
 	GetSenderChannel() chan<- []byte
+}
+
+// GetSenderChannel 返回信道
+func (client *Client) GetSenderChannel() chan<- []byte {
+	return client.send
 }
