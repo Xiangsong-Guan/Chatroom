@@ -20,7 +20,6 @@ function getCookie(c_name) {
 
 var nick = ""
 var email = ""
-var ip = ""
 
 window.onload = function () {
   var conn;
