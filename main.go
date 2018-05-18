@@ -142,7 +142,12 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO in client implament: make new client here
-	log.Println(conn)
+	_, m, err := conn.ReadMessage()
+	if err != nil {
+		log.Print(err)
+	}
+	log.Print(string(m))
+	conn.WriteMessage(websocket.TextMessage, []byte("こにちは"))
 
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.

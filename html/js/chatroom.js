@@ -52,7 +52,7 @@ window.onload = function () {
     // 在这里对连接进行初始化，从cookie中读取personal info，向服务器请求分配资源
     email = getCookie('email')
     nick = getCookie('nick')
-    conn.send(nick + "\n" + email)
+    conn.onopen = () => conn.send(nick + "|" + email)
 
     // 处理是否 remember me
     var r = getCookie('remember')
@@ -76,7 +76,7 @@ window.onload = function () {
       for (var i = 0; i < messages.length; i++) {
         var subMsgs = messages[i].split('|')
         var item = document.createElement("div");
-        item.innerText = "***" + subMsgs[2] + "*** [" + subMsgs[0] + "@" + subMsgs[1] + ".*.*] "
+        item.innerText = "***" + subMsgs[2] + "*** [" + subMsgs[0] + "@*.*." + subMsgs[1] + "] "
         for (var j = 3; j < subMsgs.length; j++) {
           item.innerText = item.innerText + subMsgs[j]
         }
