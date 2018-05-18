@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"path"
+	"strings"
 
 	"github.com/gorilla/websocket"
 )
@@ -17,6 +18,9 @@ var addr = flag.String("addr", ":8080", "http service address")
 var logFile = flag.String("log", "", "file path to log the chat history, leave it if just print to stdout")
 var home = flag.String("home", "html/", "serve flie root path")
 var indexFile = flag.String("index", "home.html", "index file in your html root dir, relative path")
+
+// pre defined here
+var spChar = "|"
 
 // some upvalue here
 var hl historylog.HistoryLog
@@ -84,6 +88,8 @@ func chatin(w http.ResponseWriter, r *http.Request) {
 	// parse and check post
 	if err := r.ParseForm(); err != nil {
 		log.Println("fail to parse this req's form:", err)
+		http.Error(w, "Invalid personal infomation", http.StatusBadRequest)
+		return
 	}
 	// here we tend to check this value in detail, but now, we just make a
 	// simple nil check for tip.
@@ -91,13 +97,24 @@ func chatin(w http.ResponseWriter, r *http.Request) {
 	if !arimasu {
 		log.Println("invalid chatin form: email is nil")
 		http.Error(w, "Invalid personal infomation", http.StatusBadRequest)
+		return
 	}
 	nickname, arimasu := r.Form["nick"]
 	if !arimasu {
 		log.Println("invalid chatin form: nick is nil")
 		http.Error(w, "Invalid personal infomation", http.StatusBadRequest)
+		return
 	}
-	log.Println("welcome", email, "the", nickname)
+
+	// here we add some additional check
+	if strings.Contains(email[0], spChar) || strings.Contains(nickname[0], spChar) {
+		log.Println("invalid chatin form: contains strange")
+		http.Error(w, "Invalid personal infomation", http.StatusBadRequest)
+		return
+	}
+
+	// here pass the check
+	log.Println("welcome", email[0], "the", nickname[0])
 
 	/* we get this kind of personal info keep by user's cookie.
 	 * in next chat page, user's client fire up a ws conn,
