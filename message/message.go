@@ -2,21 +2,23 @@
 package message
 
 import (
-	"net"
 	"strings"
 	"time"
 )
 
+// SPChar pre defined char
+var SPChar = "\t"
+
 // Info 对应一个发送消息的实体，它封装了该实体的信息
 type Info struct {
 	Name      string
-	IPAddress net.Addr
+	IPAddress string
 	Mail      string
 }
 
 // GenSummary 实现
 func (m Message) GenSummary() string {
-	return string(m.Msg) + "from" + m.UserInfo.Name + "@" + m.UserInfo.IPAddress.String()
+	return string(m.Msg) + "from" + m.UserInfo.Name + "@" + m.UserInfo.IPAddress
 }
 
 // Message 封装了聊天消息，在系统内部，聊天消息以此形式传播
@@ -37,6 +39,6 @@ func New(message []byte, sendtime time.Time, userinfo Info) Message {
 
 // Data 实现数据流的转换
 func (m Message) Data() []byte {
-	ips := strings.Split(m.UserInfo.IPAddress.String(), ".")
-	return []byte(m.UserInfo.Name + "|" + "*.*." + ips[2] + "." + ips[3] + "|" + m.SendTime.Format(time.RFC1123) + "|" + string(m.Msg))
+	ips := strings.Split(m.UserInfo.IPAddress, ".")
+	return []byte(m.UserInfo.Name + SPChar + ips[2] + "." + ips[3] + SPChar + m.SendTime.Format(time.RFC1123) + SPChar + string(m.Msg))
 }

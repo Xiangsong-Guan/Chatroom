@@ -15,7 +15,7 @@ type HistoryLog struct {
 
 // New return a history log
 // need to target file
-func New(logFile string) HistoryLog {
+func New(logFile string) *HistoryLog {
 	var customLog *log.Logger
 	var file *os.File
 
@@ -31,7 +31,7 @@ func New(logFile string) HistoryLog {
 		customLog = log.New(file, "", log.LstdFlags)
 	}
 
-	return HistoryLog{
+	return &HistoryLog{
 		target: logFile,
 		l:      customLog,
 		file:   file,

@@ -1,13 +1,16 @@
 package main
 
 import (
+	"Chatroom/client"
 	"Chatroom/historylog"
 	hs "Chatroom/httpserver"
 	hb "Chatroom/hub"
+	"Chatroom/message"
 	"flag"
 	"log"
 	"net/http"
 	"path"
+	"strings"
 
 	"github.com/gorilla/websocket"
 )
@@ -19,11 +22,11 @@ var home = flag.String("home", "html/", "serve flie root path")
 var indexFile = flag.String("index", "home.html", "index file in your html root dir, relative path")
 
 // pre defined here
-var spChar = "\t"
+var spChar = message.SPChar
 
 // some upvalue here
-var hl historylog.HistoryLog
-var hub hb.Hub
+var hl *historylog.HistoryLog
+var hub *hb.Hub
 
 func main() {
 	flag.Parse()
@@ -41,7 +44,8 @@ func main() {
 	}
 	defer hl.Close()
 
-	// TODO in hub implament: here we get hub pass hislog in
+	// in hub implament: here we get hub pass hislog in
+	hub = hb.New(hl)
 
 	// here we add handler to its url
 	var handlers = map[string]func(http.ResponseWriter, *http.Request){
@@ -133,16 +137,24 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO in client implament: make new client here
+	// in client implament: make new client here
 	_, m, err := conn.ReadMessage()
 	if err != nil {
-		log.Print(err)
+		conn.WriteMessage(websocket.TextMessage, []byte("fail to assgin resource"))
+		log.Println("fail to initial remote info:", err)
+		return
 	}
-	log.Print(string(m))
-	conn.WriteMessage(websocket.TextMessage, []byte(string(m)+"\t2018年5月18日17点04分\tこにちは"))
+	info := strings.Split(string(m), message.SPChar)
+	cInfo := message.Info{
+		Name:      info[0],
+		Mail:      info[1],
+		IPAddress: strings.Split(conn.RemoteAddr().String(), ":")[0],
+	}
+	c := client.New(hub, conn, cInfo)
 
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
-	// go client.WritePump()
-	// go client.ReadPump()
+	go c.WritePump()
+	go c.ReadPump()
+	log.Println(c.GenSummary())
 }
