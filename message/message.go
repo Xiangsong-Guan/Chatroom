@@ -35,11 +35,6 @@ func New(message []byte, sendtime time.Time, userinfo Info) Message {
 	}
 }
 
-// Sendable 抽象了在系统内部可以被传播的内容
-type Sendable interface {
-	Data() []byte
-}
-
 // Data 实现数据流的转换
 func (m Message) Data() []byte {
 	ips := strings.Split(m.UserInfo.IPAddress.String(), ".")
