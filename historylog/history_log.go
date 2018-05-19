@@ -54,16 +54,6 @@ func (hl HistoryLog) PrintFrom(obj HistoryLogger) {
 	hl.l.Println(obj.GenSummary())
 }
 
-// LoginFrom print something about obj to log with newline and exit
-func (hl HistoryLog) LoginFrom(obj HistoryLogger) {
-	hl.l.Println("[LOGIN]", obj.GenSummary())
-}
-
-// QuitFrom print something about obj to log with newline and exit
-func (hl HistoryLog) QuitFrom(obj HistoryLogger) {
-	hl.l.Println("[QUIT]", obj.GenSummary())
-}
-
 // HistoryLogger can make a summary from itself
 type HistoryLogger interface {
 	GenSummary() string

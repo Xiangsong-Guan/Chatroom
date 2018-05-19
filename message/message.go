@@ -18,7 +18,7 @@ type Info struct {
 
 // GenSummary 实现
 func (m Message) GenSummary() string {
-	return string(m.Msg) + "from" + m.UserInfo.Name + "@" + m.UserInfo.IPAddress
+	return string(m.Msg) + " from " + m.UserInfo.Name + "@" + m.UserInfo.IPAddress
 }
 
 // Message 封装了聊天消息，在系统内部，聊天消息以此形式传播
