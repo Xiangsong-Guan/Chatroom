@@ -23,6 +23,7 @@ func New(hubs *hub.Hub, webConn *websocket.Conn, inform message.Info) Client {
 		hub:    hubs,
 		webCnn: webConn,
 		info:   inform,
+		send:   make(chan []byte, 128),
 	}
 }
 
@@ -34,7 +35,7 @@ func (client *Client) ReadPump() {
 func (client *Client) WritePump() {
 }
 
-// GetSenderChannel 返回信道
-func (client *Client) GetSenderChannel() chan<- []byte {
+// SenderChannel 返回信道
+func (client *Client) SenderChannel() chan<- []byte {
 	return client.send
 }
