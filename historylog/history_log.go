@@ -15,7 +15,7 @@ type HistoryLog struct {
 
 // New return a history log
 // need to target file
-func New(logFile string) HistoryLog {
+func New(logFile string) *HistoryLog {
 	var customLog *log.Logger
 	var file *os.File
 
@@ -31,7 +31,7 @@ func New(logFile string) HistoryLog {
 		customLog = log.New(file, "", log.LstdFlags)
 	}
 
-	return HistoryLog{
+	return &HistoryLog{
 		target: logFile,
 		l:      customLog,
 		file:   file,
@@ -52,16 +52,6 @@ func (hl HistoryLog) Close() {
 // PrintFrom print something about obj to log with newline
 func (hl HistoryLog) PrintFrom(obj HistoryLogger) {
 	hl.l.Println(obj.GenSummary())
-}
-
-// LoginFrom print something about obj to log with newline and exit
-func (hl HistoryLog) LoginFrom(obj HistoryLogger) {
-	hl.l.Println("[LOGIN]", obj.GenSummary())
-}
-
-// QuitFrom print something about obj to log with newline and exit
-func (hl HistoryLog) QuitFrom(obj HistoryLogger) {
-	hl.l.Println("[QUIT]", obj.GenSummary())
 }
 
 // HistoryLogger can make a summary from itself
