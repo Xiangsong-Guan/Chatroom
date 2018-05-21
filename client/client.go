@@ -36,21 +36,21 @@ var (
 type Client struct {
 	send   chan []byte
 	hub    *hub.Hub
-	webCnn *websocket.Conn
+	wsConn *websocket.Conn
 	info   message.Info
 }
 
 // New generate a Client
-func New(hubs *hub.Hub, webConn *websocket.Conn, inform message.Info) (c *Client) {
+func New(hb *hub.Hub, wsConn *websocket.Conn, inform message.Info) (c *Client) {
 	c = &Client{
-		hub:    hubs,
-		webCnn: webConn,
+		hub:    hb,
+		wsConn: wsConn,
 		info:   inform,
 		send:   make(chan []byte, 128),
 	}
-	hubs.Register <- c
+	hb.Register <- c
 	msg := message.New([]byte("加入聊天"), time.Now(), inform)
-	hubs.Boradcast <- msg
+	hb.Boradcast <- msg
 	return
 }
 
@@ -59,13 +59,13 @@ func (c *Client) ReadPump() {
 	defer func() {
 		c.hub.Unregister <- c
 		c.hub.Boradcast <- message.New([]byte("离开聊天"), time.Now(), c.info)
-		c.webCnn.Close()
+		c.wsConn.Close()
 	}()
-	c.webCnn.SetReadLimit(maxMessageSize)
-	c.webCnn.SetReadDeadline(time.Now().Add(pongWait))
-	c.webCnn.SetPongHandler(func(string) error { c.webCnn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+	c.wsConn.SetReadLimit(maxMessageSize)
+	c.wsConn.SetReadDeadline(time.Now().Add(pongWait))
+	c.wsConn.SetPongHandler(func(string) error { c.wsConn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
-		_, msg, err := c.webCnn.ReadMessage()
+		_, msg, err := c.wsConn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
@@ -84,18 +84,18 @@ func (c *Client) WritePump() {
 	defer func() {
 		c.hub.Unregister <- c
 		ticker.Stop()
-		c.webCnn.Close()
+		c.wsConn.Close()
 	}()
 	for {
 		select {
 		case msg, ok := <-c.send:
-			c.webCnn.SetWriteDeadline(time.Now().Add(writeWait))
+			c.wsConn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				// The hub closed the channel.
-				c.webCnn.WriteMessage(websocket.CloseMessage, []byte{})
+				c.wsConn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
-			w, err := c.webCnn.NextWriter(websocket.TextMessage)
+			w, err := c.wsConn.NextWriter(websocket.TextMessage)
 			if err != nil {
 				return
 			}
@@ -111,8 +111,8 @@ func (c *Client) WritePump() {
 				return
 			}
 		case <-ticker.C:
-			c.webCnn.SetWriteDeadline(time.Now().Add(writeWait))
-			if err := c.webCnn.WriteMessage(websocket.PingMessage, nil); err != nil {
+			c.wsConn.SetWriteDeadline(time.Now().Add(writeWait))
+			if err := c.wsConn.WriteMessage(websocket.PingMessage, nil); err != nil {
 				return
 			}
 		}

@@ -18,27 +18,27 @@ type Info struct {
 
 // GenSummary 实现
 func (m Message) GenSummary() string {
-	return string(m.Msg) + " from " + m.UserInfo.Name + "@" + m.UserInfo.IPAddress
+	return string(m.msg) + " from " + m.senderInfo.Name + "@" + m.senderInfo.IPAddress
 }
 
 // Message 封装了聊天消息，在系统内部，聊天消息以此形式传播
 type Message struct {
-	SendTime time.Time
-	Msg      []byte
-	UserInfo Info
+	sendTime   time.Time
+	msg        []byte
+	senderInfo Info
 }
 
 // New generate a message
 func New(message []byte, sendtime time.Time, userinfo Info) Message {
 	return Message{
-		SendTime: sendtime,
-		Msg:      message,
-		UserInfo: userinfo,
+		sendTime:   sendtime,
+		msg:        message,
+		senderInfo: userinfo,
 	}
 }
 
 // Data 实现数据流的转换
 func (m Message) Data() []byte {
-	ips := strings.Split(m.UserInfo.IPAddress, ".")
-	return []byte(m.UserInfo.Name + SPChar + ips[2] + "." + ips[3] + SPChar + m.SendTime.Format(time.RFC1123) + SPChar + string(m.Msg))
+	ips := strings.Split(m.senderInfo.IPAddress, ".")
+	return []byte(m.senderInfo.Name + SPChar + ips[2] + "." + ips[3] + SPChar + m.sendTime.Format(time.RFC1123) + SPChar + string(m.msg))
 }
