@@ -2,7 +2,7 @@
 package hub
 
 import (
-	"Chatroom/historylog"
+	"github.com/Xiangsong-Guan/Chatroom/historylog"
 )
 
 // Hub is a powerful controller for clients

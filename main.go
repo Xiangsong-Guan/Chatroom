@@ -1,16 +1,17 @@
 package main
 
 import (
-	"Chatroom/client"
-	"Chatroom/historylog"
-	hs "Chatroom/httpserver"
-	hb "Chatroom/hub"
-	"Chatroom/message"
 	"flag"
 	"log"
 	"net/http"
 	"path"
 	"strings"
+
+	"github.com/Xiangsong-Guan/Chatroom/client"
+	"github.com/Xiangsong-Guan/Chatroom/historylog"
+	hs "github.com/Xiangsong-Guan/Chatroom/httpserver"
+	hb "github.com/Xiangsong-Guan/Chatroom/hub"
+	"github.com/Xiangsong-Guan/Chatroom/message"
 
 	"github.com/gorilla/websocket"
 )

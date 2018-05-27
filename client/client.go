@@ -2,12 +2,13 @@
 package client
 
 import (
-	"Chatroom/hub"
-	"Chatroom/message"
 	"bytes"
 	"fmt"
 	"log"
 	"time"
+
+	"github.com/Xiangsong-Guan/Chatroom/hub"
+	"github.com/Xiangsong-Guan/Chatroom/message"
 
 	"github.com/gorilla/websocket"
 )
